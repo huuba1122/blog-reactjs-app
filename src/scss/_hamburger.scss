@@ -1,0 +1,112 @@
+.hamburger {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 250;
+    
+    &-content{
+        position: relative;
+        max-width: 300px;
+        width: 100%;
+        height: 100%;
+        z-index: 500;
+        
+        background-color: #fff;
+        overflow-y: auto;
+        border-right: 1px solid var(--main-2);
+
+        &__header{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 1rem;
+            border-bottom: 1px solid var(--main-2);
+            h3{
+                font-size: 1.2rem;
+                line-height: 1.4rem;
+                flex: 1;
+            }
+
+            button{
+                display: flex;
+                align-items: center;
+                font-size: 1.5rem;
+                cursor: pointer;
+                border-radius: 50%;
+
+                &:hover{
+                    box-shadow: 0 0 0 5px rgba($color: #000000, $alpha: 0.05);
+                    background-color: rgba($color: #000000, $alpha: 0.05);
+                }
+            }
+        }
+
+        &__items{
+            padding: 0.5rem;
+            .leftBar__menu{
+                ul {
+                    li {
+                        
+                        a{
+                            padding: 0.5rem;
+                            display:flex;
+                            align-items: center;
+                            color: var(--main-9);;
+                            i{
+                                display:flex;
+                                align-items: center;
+                                padding-right: 0.5rem;
+                                font-size: 1.25rem;
+                            }
+    
+                            &:hover{
+                                background-color:var(--main-a);
+                                color: var(--main-theme-darker);
+                                border-radius: 5px;
+                            }
+                        }
+    
+                        .login-icon{
+                            i{
+                                color:rgb(255, 208, 0);
+                            }
+                        }
+                    }
+                }
+            }
+
+            .leftBar__socials {
+                display: flex;
+                width: 100%;
+                margin-top: 1rem;
+                // text-align: center;
+    
+                a{
+                    font-size: 1.5rem;
+                    color: var(--main-6);
+                    margin: 0 0.5rem;
+
+                    &:hover{
+                        color:var(--main-9);
+                    }
+                }
+            }
+                
+        }       
+    }
+
+    .overlay{
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        background-color: #000000;
+        opacity: 0.05;
+        z-index: 300;
+    }
+}

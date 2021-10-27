@@ -1,0 +1,102 @@
+.login-form {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 678px;
+    margin: auto;
+    margin-top: 1rem;
+    padding: 3rem;
+
+    background-color: var(--header-bg);
+    border: 1px solid var(--main-2);
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px rgba($color: #000000, $alpha: 0.05);
+
+    &__header{
+        text-align: center;
+        // border-bottom: 1px solid var(--main-2);
+        a{
+            color: var(--main-theme);
+        }
+
+        h2{
+            font-size:1.5rem;
+            line-height: 1.8rem;
+            padding-bottom: 0.5rem;
+        }
+
+        span{
+            font-size: 1rem;
+            color: var(--main-6);
+        }
+    }
+
+    &__hr{
+        text-align: center;
+        position: relative;
+        border-bottom: 1px solid var(--main-2);
+        margin-top: 2rem;
+        
+        span{
+            padding: 0 0.5rem;
+            background-color: var(--header-bg);
+            position: absolute;
+            top: 100%;
+            left:16%;
+
+            font-size: 0.9rem;
+            color: var(--main-6);
+
+            transform: translateY(-50%);
+        }
+    }
+
+    form{
+        margin-top: 1.5rem;
+
+        button{
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .forgot-password{
+            width: 100%;
+            margin-top: 1.5rem;
+            text-align: center;
+
+            span{
+                font-size:0.9rem;
+                color: var(--main-theme);
+                cursor: pointer;
+                
+                &:hover{
+                    color: var(--main-theme-darker);
+                }
+
+            }
+        }
+    }
+
+    .login-redirect, .form-error {
+        width: 100%;
+        text-align: center;
+        margin-top: 1.5rem;
+        span{
+            font-size:0.9rem;
+            color: var(--main-9);
+            a{
+                color: var(--main-theme);
+            }
+        }
+    }
+    .form-error {
+        .error-message{
+            width: 100%;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--error-message);
+            padding: 0.5rem;
+        }
+    } 
+}

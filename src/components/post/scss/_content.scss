@@ -1,0 +1,32 @@
+.contentPost-Wrapper{
+    background-color: var(--header-bg);
+    border-radius: 5px 5px 0 0;
+
+    &__body{
+        padding: 0.5rem 2rem 2rem 2rem;
+        p{
+            font-size: 1rem;
+            line-height: 1.5rem;
+        }
+        h1, h2, h3, h4, p, li{
+            padding: 0.5rem 0;
+        }
+
+        .js-code-highlight{
+            box-sizing: border-box;
+            overflow-x: scroll;
+        }
+
+        code{
+            width: 100%;
+            background-color: var(--main-2);
+            span{
+                padding: 0.5rem 0;
+            }
+        }
+
+        img{
+            max-width: 100% !important;
+        }
+    }
+}

@@ -1,0 +1,173 @@
+.article{
+    margin: 0.5rem 0;
+    background-color: var(--header-bg);
+
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px rgba($color: #000000, $alpha: 0.08);
+
+    &__image{
+        display:block;
+        width: 100%;
+        height: auto;
+        padding-bottom: 40%;
+
+        background-size: cover;
+        background-position: center center;
+
+        border-radius: 5px 5px 0 0;
+    }
+
+    &__details{
+        display: flex;
+        padding: 1rem;
+        flex-direction: column;
+
+        &--user{
+            display: flex;
+            .u-avatar{
+                display:block;
+                width: 2rem;
+                margin-top: 1px;
+    
+                img{
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            .u-info{
+                display:flex;
+                flex-direction: column;
+                padding-left: 0.5rem;
+
+                .u-name,
+                .time{
+                    &:hover{
+                        color: var(--main-9);
+                    }
+                }
+                .u-name{
+                    font-size:1rem;
+                    line-height: 1rem;
+                    margin-top: -2px;
+                    
+                    span{
+                        color: var(--main-9);
+                        &:hover{
+                            box-shadow: 0 0 0 5px rgba($color: #000000, $alpha: 0.05);
+                            background-color: rgba($color: #000000, $alpha: 0.05);
+                            border-radius: 2px;
+                        }
+                    }
+                }
+    
+                .time{
+                    color: var(--main-6);
+                    font-size:0.7rem;
+                }
+            }
+
+        }
+        
+        a{
+            cursor: pointer;
+        }
+
+        .a-details{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 2rem;
+
+            h2{
+                padding: 0.5rem;
+
+                &:hover{
+                    color: var(--main-theme);
+                }
+            }
+
+            .a-tag{
+                display:flex;
+                flex-wrap: wrap;
+                padding: 0.5rem;
+
+                a{
+                    padding-right: 0.5rem;
+                    color: var(--main-6);
+                    font-size: 0.8rem;
+
+                    &:hover{
+                        color: var(--main-8);
+                    }
+                }
+
+            }
+        }
+
+        .additional-details{
+            display:flex;
+            width: 100%;
+            justify-content: space-between;
+
+            .reactions{
+                color: var(--main-8);
+                font-size: 0.9rem;
+
+                a{
+                    padding: 0.5rem;
+                    display:inline-flex;
+                    align-items: center;
+
+                    i{
+                        display: flex;
+                        align-items: center;
+                        font-size: 1rem;
+                    }
+
+                    &:hover{
+                        background-color: var(--main-a);
+                        border-radius: 3px;
+                    }
+                }
+            }
+
+            .save{
+                display: flex;
+                align-items: center;
+                small{
+                    color: var(--main-6);
+                    padding: 0.5rem;
+                    font-size: 0.7rem;
+                }
+
+                button{
+                    padding: 0.5rem;
+                    color: var(--main-6);
+                    font-size: 1rem;
+                    
+                    cursor: pointer;
+                    background-color: var(--main-2);
+                    border-radius: 4px;
+
+                    &:hover{
+                        background-color: var(--main-3);
+                        color: var(--main-9);
+
+                    }
+                }
+
+                .btb-delete{
+                    color: var(--error-message);
+                    background-color: var(--main-0);
+
+                    &:hover{
+                        background-color: var(--main-1);
+                        color: var(--error-message);
+                    }
+                }
+            }
+        }
+    }
+}

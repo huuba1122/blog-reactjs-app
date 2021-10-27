@@ -1,0 +1,27 @@
+.goTop{
+    display: block;
+    position: fixed;
+    bottom: 2rem;
+    right: 1rem;
+    .goTop-button{
+        padding: 0.5rem;
+        cursor: pointer;
+
+        background-color: var(--main-theme);
+        border-radius: 50%;
+        opacity: 0.8;
+
+        font-size: 2rem;
+        color: var(--header-bg);
+
+        i{
+            display: flex;
+            align-items: center;
+            // color: var(--main-theme);
+        }
+        &:hover{
+            background-color: var(--main-theme-darker);
+        }
+
+    }
+}

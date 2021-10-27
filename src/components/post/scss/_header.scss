@@ -1,0 +1,86 @@
+.Header{
+    background-color: var(--header-bg);
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+
+    &__image{
+        display:block;
+        width: 100%;
+        height: auto;
+        padding-bottom: 40%;
+
+        background-size: cover;
+        background-position: center center;
+    }
+
+    &__details{
+        display: flex;
+        padding: 1rem;
+        flex-direction: column;
+
+        &-user{
+            display: flex;
+            align-items: center;
+            .u-avatar{
+                display:block;
+                width: 3rem;
+                margin-top: 1px;
+    
+                img{
+                    border-radius: 50%;
+                    width: 3rem;
+                    height: 3rem;
+                }
+            }
+
+            .u-info{
+                display:flex;
+                flex-direction: column;
+                padding-left: 0.5rem;
+
+                .u-name{
+                    color: var(--main-9);
+                    font-size:1rem;
+                    line-height: 1.5rem;
+                    font-weight: bold;
+                    margin-top: -2px;
+
+                    &:hover{
+                        color: var(--main-theme);
+                    }
+                }
+    
+                .time{
+                    color: var(--main-6);
+                    font-size:0.7rem;
+                }
+            }
+
+        }
+        
+        .a-details{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-left: 2rem;
+
+            h2{
+                font-size: 2.5rem;
+                padding: 0.5rem;
+            }
+
+            .a-tag{
+                display:flex;
+                flex-wrap: wrap;
+                padding: 0.5rem;
+
+                span{
+                    padding-right: 0.5rem;
+                    color: var(--main-6);
+                    font-size: 0.8rem;
+                }
+
+            }
+        }
+    }
+}
