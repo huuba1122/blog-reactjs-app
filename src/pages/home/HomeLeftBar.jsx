@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from 'react-router-dom';
-import PropTypes from "prop-types";
+import { TagContext } from "../../contexts/TagContext";
 import { FaHandshake } from "react-icons/fa";
 import { IoLogoTwitter, IoLogoFacebook, IoLogoGithub } from "react-icons/io";
 import { RiInstagramFill, RiTwitchLine } from "react-icons/ri";
@@ -16,15 +16,9 @@ import {
 
 import "./scss/_leftBar.scss";
 
-HomeLeftBar.propTypes = {
-  tags: PropTypes.array
-};
+function HomeLeftBar() {
 
-HomeLeftBar.defaultProps = {
-  tags: []
-}
-
-function HomeLeftBar({tags}) {
+  const { tags } = useContext(TagContext);
   return (
     <>
       <aside className="leftBar">

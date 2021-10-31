@@ -1,25 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
-import PropTypes from "prop-types";
 import Input from "../../components/form/Input";
 import Button from "../../components/form/Button";
 import authApi from "../../api/authApi";
 import { STORAGE_KEY } from "../../constants/storageKey";
+import { authAction } from '../../constants/actionType';
 import validation from "../../utils/validations";
+import { AuthContext } from '../../contexts/AuthContext';
 
 import "./scss/_login.scss";
 
-Login.prototype = {
-    isLogged: PropTypes.func,
-};
-
-Login.defaultProps = {
-    isLogged: null,
-};
-
-function Login(props) {
+function Login() {
   const history = useHistory();
-  const [userLogin, setUserLogin] = useState({
+  // load context auth
+  const { dispatch } = useContext(AuthContext);
+  // For this components only
+  const [user, setUser] = useState({
     email: "",
     password: "",
   });
@@ -32,29 +28,34 @@ function Login(props) {
   const handleOnChange = (e) => {
     const { name, value } = e.target;
 
-    setUserLogin({
-      ...userLogin,
+    setUser({
+      ...user,
       [name]: value,
     });
   };
 
   const handleOnClick = async () => {
     setFormError("");
-    const isValidEmail = validation("email", userLogin.email);
-    const isValidPassword = validation("password", userLogin.password);
+    const isValidEmail = validation("email", user.email);
+    const isValidPassword = validation("password", user.password);
     if (isValidEmail === true && isValidPassword === true) {
       setInputError({ email: "", password: "" });
-      const response = await authApi.login(userLogin);
+      const response = await authApi.login(user);
       if (response.status === "success") {
         const expiredTime = Date.now() + (+response.expiredTime) * 1000;
         const expiredRefreshTime = Date.now() + (+response.expiredRefreshTime) * 1000;
-        console.log(new Date(expiredTime));
+        // console.log('login success>>>>', response);
         window.localStorage.setItem(STORAGE_KEY.token, response.accessToken);
         window.localStorage.setItem(STORAGE_KEY.refreshToken, response.refreshToken);
         window.localStorage.setItem(STORAGE_KEY.expiredTime, expiredTime);
         window.localStorage.setItem(STORAGE_KEY.expiredRefreshTime, expiredRefreshTime);
-        window.localStorage.setItem(STORAGE_KEY.user, JSON.stringify(response.user));
-        props.isLogged();
+        // window.localStorage.setItem(STORAGE_KEY.user, JSON.stringify(response.user));
+        dispatch({
+          type: authAction.SAVE_USER_LOGIN,
+          payload: {
+            user: response.user
+          }
+        })
         history.push("/");
       } else {
         setFormError(response.message);
@@ -90,7 +91,7 @@ function Login(props) {
           name="email"
           onChange={handleOnChange}
           type="text"
-          value={userLogin.email}
+          value={user.email}
           error={inputError}
         />
         <Input
@@ -98,7 +99,7 @@ function Login(props) {
           name="password"
           onChange={handleOnChange}
           type="password"
-          value={userLogin.password}
+          value={user.password}
           error={inputError}
         />
         <Button

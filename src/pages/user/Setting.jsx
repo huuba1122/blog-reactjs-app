@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useReducer } from "react";
 import { useHistory } from "react-router-dom";
 import "./scss/_setting.scss";
 import Input from "../../components/form/Input";
@@ -10,15 +10,20 @@ import userApi from "../../api/userApi";
 import validation from "../../utils/validations";
 import { AiFillProfile } from "react-icons/ai";
 import { RiAccountCircleLine } from "react-icons/ri";
-import { STORAGE_KEY } from "../../constants/storageKey";
+import { authAction } from "../../constants/actionType";
+import { AuthContext } from "../../contexts/AuthContext";
+import popupReducer from "../../reducers/PopUpReducer";
+import { postAction, popupAction } from "../../constants/actionType";
 
 function Setting() {
   const history = useHistory();
-  const userLogin = authApi.getCurrentUser();
+  // load context auth
+  const { userLogin, dispatch } = useContext(AuthContext);
+  if(!userLogin || !userLogin.user) history.push('/user/sign-in');
+  //load popupReducer
+  const [popup, dispatchPopup ] = useReducer(popupReducer, {});
 
-  if (!userLogin) {
-    history.push("/");
-  }
+  // For this components only
   const [inputError, setInputError] = useState({
     name: "",
     email: "",
@@ -31,15 +36,15 @@ function Setting() {
     confirmNewPassword: "",
   });
   const [userInfo, setUserInfo] = useState(() => {
-    if (userLogin)
+    if (userLogin && userLogin.user)
       return {
-        name: userLogin.name,
-        email: userLogin.email,
-        website: userLogin.website,
-        work: userLogin.work,
-        location: userLogin.location,
-        skills: userLogin.skills,
-        avatarViewLink: userLogin.avatarViewLink,
+        name: userLogin.user.name,
+        email: userLogin.user.email,
+        website: userLogin.user.website,
+        work: userLogin.user.work,
+        location: userLogin.user.location,
+        skills: userLogin.user.skills,
+        avatarViewLink: userLogin.user.avatarViewLink,
       };
     return {
       name: "",
@@ -57,13 +62,14 @@ function Setting() {
     confirmNewPassword: "",
   });
   const [showLoading, setShowLoading] = useState(false);
-  const [popup, setPopup] = useState({
-    isShow: false,
-    title: "",
-    className: "",
-    message: "",
-    type: "",
-  });
+  const [showLoadingUpdate, setShowLoadingUpdate] = useState(false);
+  // const [popup, setPopup] = useState({
+  //   isShow: false,
+  //   title: "",
+  //   className: "",
+  //   message: "",
+  //   type: "",
+  // });
   const [fieldActive, setFieldActive] = useState("profile");
   const [formError, setFormError] = useState("");
 
@@ -82,28 +88,39 @@ function Setting() {
   };
 
   const handleUpdate = async () => {
-    const isValidEmail = validation("email", userLogin.email);
+    const isValidEmail = validation("email", userInfo.email);
     if (isValidEmail === true) {
+      setShowLoadingUpdate(true);
       try {
         const token = await authApi.getToken();
         const userUpdate = await userApi.updateInfo(
-          userLogin._id,
+          userLogin.user._id,
           userInfo,
           token
         );
-        console.log("update user>>>>>>", userUpdate);
+        // console.log("update user>>>>>>", userUpdate);
+        setShowLoadingUpdate(false);
         if (userUpdate.status === "success") {
-          setPopup({
-            isShow: true,
-            message: "Update your info successfully!",
-            title: "Message",
-            className: "success",
-            type: "",
+          dispatch({
+            type: authAction.SAVE_USER_LOGIN,
+            payload: {
+              user: userUpdate.data.user
+            }
           });
-
-          localStorage.removeItem(STORAGE_KEY.user);
-          localStorage.setItem(STORAGE_KEY.user, JSON.stringify(userUpdate.data.user));
-          history.go(0);
+          // setPopup({
+          //   isShow: true,
+          //   message: "Update your info successfully!",
+          //   title: "Message",
+          //   className: "success",
+          //   type: "",
+          // });
+          dispatchPopup({
+            type: popupAction.SUCCESS,
+            payload: {
+              message: "Update your info successfully!",
+              title: "Message"
+            }
+          })
         } else {
           if (userUpdate.message) {
             console.log(userUpdate);
@@ -112,13 +129,20 @@ function Setting() {
               message = userUpdate.message;
             }
 
-            setPopup({
-              isShow: true,
-              message: message,
-              title: "Error",
-              className: "error",
-              type: "",
-            });
+            // setPopup({
+            //   isShow: true,
+            //   message: message,
+            //   title: "Error",
+            //   className: "error",
+            //   type: "",
+            // });
+            dispatchPopup({
+              type: popupAction.ERROR,
+              payload: {
+                message,
+                title: "Error"
+              }
+            })
           }
         }
       } catch (error) {
@@ -157,15 +181,20 @@ function Setting() {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("avatar", file);
-    const res = await userApi.uploadAvatar(userLogin._id, formData);
-    if (res.status && res.status === "success") {
-      setUserInfo({
-        ...userInfo,
-        avatarViewLink: res.data.avatarFile.linkDownload,
-      });
-      setShowLoading(false);
-    } else {
-      console.log(res);
+    try {
+      const res = await userApi.uploadAvatar(userLogin.user._id, formData);
+      // console.log('uploadAvatar>>>', res);
+      if (res.status && res.status === "success") {
+        setUserInfo({
+          ...userInfo,
+          avatarViewLink: res.data.avatarFile.linkDownload,
+        });
+        setShowLoading(false);
+      } else {
+        console.log(res);
+      }
+    } catch (error) {
+      console.log("error_upload_avatar", error);
     }
   };
 
@@ -184,27 +213,40 @@ function Setting() {
       try {
         const token = await authApi.getToken();
         const updatePassword = await userApi.changePassword(
-          userLogin._id,
+          userLogin.user._id,
           newPassword,
           token
         );
+        // console.log('change password >>>>>',updatePassword);
         if (updatePassword.status === "success") {
-          userApi.clearStorage();
           history.push("/user/sign-in");
-          history.go(0);
+          dispatch({
+            type: authAction.USER_LOGOUT,
+            payload: {
+              user: null
+            },
+          });
+          userApi.clearStorage();
         } else {
           if (updatePassword.message) {
             let message = "Server error....";
             if (updatePassword.message) {
               message = updatePassword.message;
             }
-            setPopup({
-              isShow: true,
-              message: message,
-              title: "Error",
-              className: "error",
-              type: "",
-            });
+            // setPopup({
+            //   isShow: true,
+            //   message: message,
+            //   title: "Error",
+            //   className: "error",
+            //   type: "",
+            // });
+            dispatchPopup({
+              type: popupAction.ERROR,
+              payload: {
+                message,
+                title: "Error"
+              }
+            })
           }
           console.log(updatePassword);
         }
@@ -239,18 +281,19 @@ function Setting() {
   };
 
   const hiddenPopup = () => {
-    setPopup({
-      ...popup,
-      isShow: false,
-    });
+    dispatchPopup({
+      type: popupAction.HIDDEN,
+      payload: null
+    })
   };
 
   return (
     <>
       <div className="setting">
         <div className="setting__header">
-          <span>Setting for
-            <small> @{userInfo.name}</small>
+          <span>
+            Setting for
+            <small> @{userLogin.user && userLogin.user.name}</small>
           </span>
         </div>
         <div className="setting__content">
@@ -419,12 +462,23 @@ function Setting() {
 
             {fieldActive !== "account" && (
               <div className="setting__content-footer">
-                <Button
-                  type="button"
-                  label="Save Profile Information"
-                  onClick={handleUpdate}
-                  className="btn btn-primary btn-fullwidth"
-                />
+                {showLoadingUpdate ? (
+                  <Loading
+                    data={{
+                      type: "spin",
+                      color: "blue",
+                      width: "32px",
+                      height: "32px",
+                    }}
+                  />
+                ) : (
+                  <Button
+                    type="button"
+                    label="Save Profile Information"
+                    onClick={handleUpdate}
+                    className="btn btn-primary btn-fullwidth"
+                  />
+                )}
               </div>
             )}
           </div>

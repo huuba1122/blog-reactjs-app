@@ -1,45 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link, useHistory } from "react-router-dom";
 import authApi from "../api/authApi";
-import { STORAGE_KEY } from "../constants/storageKey";
+import userApi from "../api/userApi";
 import { FaDev } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { AiOutlineMenu } from "react-icons/ai";
-import { RiNotificationLine } from "react-icons/ri";
-import { BiMessageRoundedCheck } from "react-icons/bi";
+// import { RiNotificationLine } from "react-icons/ri";
+// import { BiMessageRoundedCheck } from "react-icons/bi";
+import { AuthContext } from '../contexts/AuthContext';
+import { authAction } from '../constants/actionType';
 
 Navigation.propTypes = {
-  openHumburger: PropTypes.func,
-  userLogin: PropTypes.object,
-  isLogged: PropTypes.func,
+  openHumburger: PropTypes.func
 };
 
 Navigation.defaultProps = {
-  openHumburger: null,
-  userLogin: null,
-  isLogged: null,
+  openHumburger: null
 };
 
 function Navigation(props) {
   const history = useHistory();
+ // Load context auth
+ const { userLogin, dispatch } = useContext(AuthContext);
+ 
+  // For this components only
   const [searchText, setSearchText] = useState("");
   const showHamburger = () => {
     props.openHumburger();
   };
 
   const logout = async () => {
-    console.log("logout>>>>");
     const response = await authApi.logout();
     if (response.status && response.status === "success") {
-      localStorage.removeItem(STORAGE_KEY.token);
-      localStorage.removeItem(STORAGE_KEY.refreshToken);
-      localStorage.removeItem(STORAGE_KEY.expiredTime);
-      localStorage.removeItem(STORAGE_KEY.expiredRefreshTime);
-      localStorage.removeItem(STORAGE_KEY.user);
-      props.isLogged("logout");
+      userApi.clearStorage();
       history.push("/");
-      // history.go(0);
+      dispatch({
+        type: authAction.USER_LOGOUT,
+        payload: null
+      })
     } else {
       console.log(response);
     }
@@ -98,7 +97,7 @@ function Navigation(props) {
             <button className="header-icon search-icon show-mobile" onClick={showFormSearchMobile}>
               <FiSearch />
             </button>
-            {props.userLogin ? (
+            {(userLogin && userLogin.user) ? (
               <>
                 <Link to="/post/create" className="header-link hidden-mobile">
                   Create post
@@ -111,15 +110,15 @@ function Navigation(props) {
                 </button> */}
                 <span>
                   <img
-                    src={props.userLogin.avatarViewLink}
+                    src={userLogin.user.avatarViewLink || "/images/default.jpeg"}
                     alt="profile avatar"
                   />
                   <ul className="dropdown-profile">
                     <li>
-                      <Link to={"/user/profile/" + props.userLogin._id}>
-                        <div className="u-name">{props.userLogin.name}</div>
+                      <Link to={"/user/profile/" + userLogin.user._id}>
+                        <div className="u-name">{userLogin.user.name}</div>
                         <small className="u-name-id">
-                          @{props.userLogin.name}
+                          @{userLogin.user.name}
                         </small>
                       </Link>
                     </li>

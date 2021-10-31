@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect, useContext } from "react";
 import Card from "./Card";
 import postApi from "../../api/postApi";
+import { TagContext } from '../../contexts/TagContext';
 // import { STORAGE_KEY } from "../../constants/storageKey";
 
 import "./scss/_rightBar.scss";
 
-HomeRightBar.propTypes = {
-  tags: PropTypes.array,
-};
+function HomeRightBar() {
+  //load context tag
+  const { tags } = useContext(TagContext);
 
-HomeRightBar.defaultProps = {
-  tags: [],
-};
-
-function HomeRightBar({ tags }) {
+  // For this components only
   const [newsPosts, setNewsPosts] = useState([]);
   const [helpPosts, setHelpPosts] = useState([]);
 

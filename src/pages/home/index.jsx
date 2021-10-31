@@ -7,12 +7,12 @@ import GoTop from '../../components/utils/GoTop';
 import './scss/_main.scss';
 
 
-function homeComponents({tags}) {
+function homeComponents() {
     return (
         <div className="home-container">
-            <HomeLeftBar tags={tags} />
+            <HomeLeftBar />
             <HomeContent />
-            <HomeRightBar tags={tags} />
+            <HomeRightBar />
             <GoTop />
         </div>
     );
