@@ -17,8 +17,8 @@ import {
 } from "react-icons/fa";
 import { HiLocationMarker } from "react-icons/hi";
 import { IoDocumentTextOutline } from "react-icons/io5";
-
 import "./scss/_profile.scss";
+import usePagination from '../../hooks/usePagination';
 
 function Profile() {
   const { userId } = useParams();
@@ -27,34 +27,26 @@ function Profile() {
 
   // load post reducer
   const [articles, dispatch] = useReducer(postReducer, {});
-  const [popup, dispatchPopup ] = useReducer(popupReducer, {});
+  const [popup, dispatchPopup] = useReducer(popupReducer, {});
   //for this components only
   const [userProfile, setUserProfile] = useState({});
-  const [params, setParams] = useState({
-    page: 1,
-    limit: 10,
-    sort: "createdAt",
-    s_type: "desc",
-    field: "userId",
-    f_value: userId,
-  });
-  // const [popup, setPopup] = useState({
-  //   isShow: false,
-  //   title: "",
-  //   className: "",
-  //   message: "",
-  //   postId: "",
-  //   type: "",
-  // });
+
+  // load customize Hook pagination
+  const limit = usePagination(articles.total || 0);
 
   useEffect(() => {
+    const params = {
+      page: 1,
+      sort: "createdAt",
+      s_type: "desc",
+      field: "userId",
+      f_value: userId,
+    };
     const getUserPost = async (params) => {
       try {
         const res = await postApi.get(params);
         // console.log("user post>>>>>>>>>", posts);
         if (res.status === "success") {
-          // setUserPosts(posts.data.posts);
-          // setTotalPost(posts.data.total);
           dispatch({
             type: postAction.SAVE_LIST_POST,
             payload: {
@@ -69,8 +61,8 @@ function Profile() {
         console.log(error);
       }
     };
-    getUserPost(params);
-  }, [params]);
+    getUserPost({...params, limit});
+  }, [userId, limit]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -90,134 +82,65 @@ function Profile() {
   }, [userId]);
 
   const showConfirmDelete = async (postId) => {
-    // popup({
-    //   isShow: true,
-    //   title: "Delete",
-    //   message: "Do you want to delete this post!",
-    //   className: "error",
-    //   postId: postId,
-    //   type: "confirm",
-    // });
     dispatchPopup({
       type: popupAction.CONFIRM,
       payload: {
         message: "Do you want to delete this post!",
         postId: postId,
-        title: "Delete"
-      }
-    })
+        title: "Delete",
+      },
+    });
   };
 
   const confirmDelete = async () => {
     const postId = popup.postId;
     if (!postId) return false;
-    // setPopup({
-    //   ...popup,
-    //   isShow: false,
-    // });
     dispatchPopup({
       type: popupAction.HIDDEN,
-      payload: null
-    })
+      payload: null,
+    });
     try {
       const token = await authApi.getToken();
       const res = await postApi.deletePost(postId, token);
       // console.log('call delete post>>>>>>', res);
       if (res.status === "success") {
-        // const newPostList = userPosts.filter((post) => {
-        //   return post._id !== postId;
-        // });
-        // setUserPosts(newPostList);
-        // setTotalPost(totalPost - 1);
         dispatch({
           type: postAction.DELETE_POST,
           payload: {
             postId,
           },
         });
-        // setPopup({
-        //   isShow: true,
-        //   postId: "",
-        //   message: "Delete successfully!!",
-        //   title: "Message",
-        //   className: "success",
-        //   type: "",
-        // });
         dispatchPopup({
           type: popupAction.SUCCESS,
           payload: {
             message: "Delete successfully!!",
-            title: "Message"
-          }
-        })
+            title: "Message",
+          },
+        });
       } else {
         console.log(res);
         let message = "Server error....";
         if (res.message) {
           message = res.message;
         }
-
-        // setPopup({
-        //   isShow: true,
-        //   postId: "",
-        //   message: message,
-        //   title: "Error",
-        //   className: "error",
-        //   type: "",
-        // });
         dispatchPopup({
           type: popupAction.ERROR,
           payload: {
             message,
-            title: "Error"
-          }
-        })
+            title: "Error",
+          },
+        });
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const html = document.documentElement;
-      const body = document.body;
-      const windowHeight = window.innerHeight || html.offsetHeight;
-
-      const docHeight = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
-      );
-
-      const windowBottom = windowHeight + window.pageYOffset;
-
-      if (windowBottom >= docHeight - 200) {
-        if (params.limit < articles.total) {
-          // console.log("windowBottom>>.", windowBottom);
-          console.log("limit>>.", params.limit);
-          setParams({
-            ...params,
-            limit: params.limit + 10,
-          });
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [params, articles.total]);
-
   const hiddenPopup = () => {
-    // setPopup({
-    //   ...popup,
-    //   isShow: false,
-    // });
     dispatchPopup({
       type: popupAction.HIDDEN,
-      payload: null
-    })
+      payload: null,
+    });
   };
 
   return (

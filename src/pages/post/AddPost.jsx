@@ -10,8 +10,8 @@ import Button from "../../components/form/Button";
 import ContentPost from "../../components/post/Content";
 import BoxPopup from "../../components/utils/BoxPopup";
 import Loading from "../../components/utils/Loading";
-
 import "./scss/_addPost.scss";
+
 
 function AddPost() {
   const userLogin = authApi.getCurrentUser();

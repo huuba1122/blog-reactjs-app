@@ -22,3 +22,11 @@ export const popupAction  = {
     CONFIRM: 'CONFIRM',
     HIDDEN: 'HIDDEN'
 }
+
+
+export const paramAction  = {
+    SET_PAGINATION: 'SET_PAGINATION',
+    SET_SEARCH_STRING: 'SET_SEARCH_STRING',
+    SET_SORT: 'SET_SORT'
+
+}

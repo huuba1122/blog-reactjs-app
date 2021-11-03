@@ -11,34 +11,12 @@ import Search from "./pages/search";
 import Post from "./pages/post";
 import User from "./pages/user";
 import "./App.scss";
-// import postApi from "./api/postApi";
-// import { STORAGE_KEY } from "./constants/storageKey";
 
 function App() {
   const [showHamburger, setShowHamburger] = useState(false);
-  // const [tags, setTags] = useState([]);
   const isShowHamburger = () => {
     setShowHamburger(!showHamburger);
   };
-
-  // useEffect(() => {
-  //   const getTags = async () => {
-  //     try {
-  //       const res = await postApi.getTags();
-  //       if (res.status && res.status === "success") {
-  //         // console.log(res.data.tags);
-  //         setTags(res.data.tags);
-  //         localStorage.setItem(STORAGE_KEY.tags, JSON.stringify(res.data.tags));
-  //       } else {
-  //         console.log(res);
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   getTags();
-  // }, []);
 
   return (
     <div className="App">

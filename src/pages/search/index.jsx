@@ -9,6 +9,8 @@ import { TagContext } from "../../contexts/TagContext";
 import postReducer from "../../reducers/PostReducer";
 import { postAction } from "../../constants/actionType";
 import Loading from "../../components/utils/Loading";
+import usePagination from "../../hooks/usePagination";
+import getFieldSort from '../../utils/getFieldSort';
 import "./scss/_search.scss";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -32,6 +34,8 @@ function SearchPage() {
   });
   const [elementActive, setElementActive] = useState("latest");
   const [tagActive, setTagActive] = useState("");
+// load customize hooks pagination
+ const limit = usePagination(articles.total || 0);
 
   useEffect(() => {
     setShowLoading(true);
@@ -46,77 +50,31 @@ function SearchPage() {
             type: postAction.SAVE_LIST_POST,
             payload: {
               posts: res.data.posts,
-              total: res.data.total
-            }
+              total: res.data.total,
+            },
           });
         } else {
           console.log("error>>>", res);
         }
       } catch (error) {
-        console.log('search_list_post_error',error);
+        console.log("search_list_post_error", error);
       }
     };
     getUserPost({
       ...params,
       q: searchParamString,
+      limit
     });
-  }, [params, searchParamString]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const html = document.documentElement;
-      const body = document.body;
-      const windowHeight = window.innerHeight || html.offsetHeight;
-
-      const docHeight = Math.max(
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
-      );
-
-      const windowBottom = windowHeight + window.pageYOffset;
-
-      if (windowBottom >= docHeight - 200) {
-        if (params.limit < articles.total) {
-          // console.log("windowBottom>>.", windowBottom);
-          console.log("limit>>.", params.limit);
-          setParams({
-            ...params,
-            limit: params.limit + 10,
-          });
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [params, articles.total]);
+  }, [params, searchParamString, limit]);
 
   const sortArticle = (e) => {
     const idLinkActive = e.target.id;
     setElementActive(idLinkActive);
-
-    if (idLinkActive === "feed") {
-      setParams({
-        ...params,
-        sort: "quantityComment",
-      });
-    }
-
-    if (idLinkActive === "latest") {
-      setParams({
-        ...params,
-        sort: "createdAt",
-      });
-    }
-
-    if (idLinkActive === "top") {
-      setParams({
-        ...params,
-        sort: "reaction.quantity",
-      });
-    }
+    const fieldSort = getFieldSort(idLinkActive);
+    setParams({
+      ...params,
+      sort: fieldSort
+    });
   };
 
   const searchPostTag = (e) => {
@@ -163,7 +121,10 @@ function SearchPage() {
             </div>
           </form>
         </div>
-        <span>Search result for: {searchParamString} <small>({articles.total || 0})</small></span>
+        <span>
+          Search result for: {searchParamString}{" "}
+          <small>({articles.total || 0})</small>
+        </span>
       </div>
       <div className="searchContainer__body">
         <div className="searchContainer__body-left">

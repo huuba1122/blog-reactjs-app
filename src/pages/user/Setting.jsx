@@ -13,7 +13,7 @@ import { RiAccountCircleLine } from "react-icons/ri";
 import { authAction } from "../../constants/actionType";
 import { AuthContext } from "../../contexts/AuthContext";
 import popupReducer from "../../reducers/PopUpReducer";
-import { postAction, popupAction } from "../../constants/actionType";
+import { popupAction } from "../../constants/actionType";
 
 function Setting() {
   const history = useHistory();

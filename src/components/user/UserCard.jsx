@@ -30,7 +30,13 @@ function UserCard(props) {
           </li>
           <li>
             <span>Website</span>
-            <small>{user.website}</small>
+            <a 
+              href={user.website}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {user.website}
+            </a>
           </li>
           {user.Work && (
             <li>

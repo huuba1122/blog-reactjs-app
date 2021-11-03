@@ -153,6 +153,13 @@ function Detail() {
     }
   };
 
+  // const handleShowMoreComment = () => {
+  //   setCommentParams({
+  //     ...commentParams,
+  //     limit: commentParams.limit + 10
+  //   })
+  // }
+
   const showFormComment = () => {
     setIsShowForm(true);
   };
@@ -238,6 +245,9 @@ function Detail() {
                   })}
                 </div>
               )}
+              {/* <div className="detail__comment-footer">
+                <button onClick={handleShowMoreComment}>See more</button>
+              </div> */}
             </div>
           </div>
           <div className="postDetail__right">
